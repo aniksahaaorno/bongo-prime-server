@@ -106,6 +106,15 @@ export async function CreateOrderService(payload: any) {
     };
   });
 
+  const errorItem = finalProducts.find((item: any) => !item.success);
+
+  if (errorItem) {
+    return {
+      success: false,
+      message: "Selected product is out of stock",
+    };
+  }
+
   // Calculate order totals
   const subtotal = finalProducts.reduce(
     (sum: any, p: any) => sum + p.subtotal,
@@ -166,8 +175,7 @@ export async function CreateOrderService(payload: any) {
   }; */
 
   // Insert order into DB
-  const result =
-    await createOrderCollection.insertOne(orderData);
+  const result = await createOrderCollection.insertOne(orderData);
 
   const orderId = result.insertedId;
 
