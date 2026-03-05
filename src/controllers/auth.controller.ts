@@ -11,12 +11,10 @@ export const logInController = async (
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res
-        .status(500)
-        .json({
-          success: false,
-          message: "Email and password is require",
-        });
+      return res.status(500).json({
+        success: false,
+        message: "Email and password is require",
+      });
     }
 
     const isExistingUser = await findByEmail(email);
@@ -60,11 +58,19 @@ export const logInController = async (
     //   maxAge: 3 * 24 * 60 * 60 * 1000,
     // });
 
-    res.cookie("token", token, {
+    /* res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite:
         process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 3 * 24 * 60 * 60 * 1000,
+    }); */
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      path: "/",
       maxAge: 3 * 24 * 60 * 60 * 1000,
     });
 
@@ -153,12 +159,10 @@ export const SignUpController = async (
     const result = await Createuser(payload);
 
     if (!result) {
-      res
-        .status(403)
-        .json({
-          success: false,
-          message: "User not created successfully",
-        });
+      res.status(403).json({
+        success: false,
+        message: "User not created successfully",
+      });
     }
 
     return res.status(201).json({
